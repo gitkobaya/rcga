@@ -1,0 +1,14 @@
+#ifndef _CDFRAND_H_
+#define _CDFRAND_H_
+
+const double pi = 3.1415926535897932846264;
+
+///////////////////////////////////////////////////////////////////////////
+/////正規乱数
+extern double grand(double sigma,double mean);
+
+//////////////////////////////////////////////////////////////////////////
+/////ポアソン分布に従う乱数
+extern double prand(double mean);
+
+#endif /* _CDFRAND_H_ */
