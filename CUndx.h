@@ -34,6 +34,8 @@ public:
 	inline int iGetParentOutputFlag(){ return iParentOutputFlag; };
 	inline void vSetChildrenOutputFlag( int iData ){iChildrenOutputFlag = iData;};
 	inline int iGetChildrenOutputFlag(){ return iChildrenOutputFlag; };
+	void vSetGenData( double **pplfGenData );
+	void vGetGenData( double **pplfGenData );
 
 public:
 	/**

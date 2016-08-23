@@ -96,6 +96,12 @@ void CRex::vInitialize( int iGenerationNum, int iGenNum, int iGenVectorData, int
 			cre.SetErrorInfo( REX_MEMORY_ALLOCATE_ERROR, "vInitialize", "CRex", "メモリ確保に失敗しました。", __LINE__ );
 			throw( cre );
 		}
+		plfCentroidSteep = new double[iGenVector];
+		if( plfCentroidSteep == NULL )
+		{
+			cre.SetErrorInfo( REX_MEMORY_ALLOCATE_ERROR, "vInitialize", "CRex", "メモリ確保に失敗しました。", __LINE__ );
+			throw( cre );
+		}
 
 		for( i = 0;i < iChildrenNumber; i++ )
 		{
@@ -108,6 +114,7 @@ void CRex::vInitialize( int iGenerationNum, int iGenNum, int iGenVectorData, int
 			plfTempVector[i] = 0.0;
 			plfUpperEvalChildrenCentroid[i] = 0.0;
 			plfChildrenCentroid[i] = 0.0;
+			plfCentroidSteep[i] = 0.0;
 		}
 		for( i = 0;i < iParentNumber; i++ )
 		{
@@ -205,6 +212,13 @@ void CRex::vInitialize( int iGenerationNum, int iGenNum, int iGenVectorData, int
 			cre.SetErrorInfo( REX_MEMORY_ALLOCATE_ERROR, "vInitialize", "CRex", "メモリ確保に失敗しました。", __LINE__ );
 			throw( cre );
 		}
+		plfCentroidSteep = new double[iGenVector];
+		if( plfCentroidSteep == NULL )
+		{
+			cre.SetErrorInfo( REX_MEMORY_ALLOCATE_ERROR, "vInitialize", "CRex", "メモリ確保に失敗しました。", __LINE__ );
+			throw( cre );
+		}
+
 
 		for( i = 0;i < iChildrenNumber; i++ )
 		{
@@ -217,6 +231,7 @@ void CRex::vInitialize( int iGenerationNum, int iGenNum, int iGenVectorData, int
 			plfTempVector[i] = 0.0;
 			plfUpperEvalChildrenCentroid[i] = 0.0;
 			plfChildrenCentroid[i] = 0.0;
+			plfCentroidSteep[i] = 0.0;
 		}
 		for( i = 0;i < iParentNumber; i++ )
 		{
@@ -291,6 +306,11 @@ void CRex::vTerminate()
 			delete[] plfUpperEvalChildrenCentroid;
 			plfUpperEvalChildrenCentroid = NULL;
 		}
+		if( plfCentroidSteep != NULL )
+		{
+			delete[] plfCentroidSteep;
+			plfCentroidSteep = NULL;
+		}
 	}
 	catch( ... )
 	{
@@ -340,21 +360,27 @@ void CRex::vRex()
 		}
 	
 		// 重心を算出します。
-		for( j = 0;j < iGenVector; j++ )
+		for( i = 0;i < iGenVector; i++ )
 		{
-			plfCentroid[j] = 0.0;
+			plfCentroid[i] = 0.0;
 		}
-		for( j = 0;j < iParentNumber; j++ )
+		for( i = 0;i < iParentNumber; i++ )
 		{
-			for( k = 0;k < iGenVector; k++ )
+			for( j = 0;j < iGenVector; j++ )
 			{
-				plfCentroid[k] += ( pplfGens[stlSelectParentLoc.at(j)][k]/(double)iParentNumber );
+				plfCentroid[j] += pplfGens[stlSelectParentLoc.at(i)][j];
 			}
+		}
+		for( i = 0;i < iGenVector; i++ )
+		{
+			plfCentroid[i] /= (double)iParentNumber;
 		}
 	// REX(RealCoded Emsanble )を実行します。交叉回数Nc回実行し、Nc個の子供を生成します。
 		// 統計量遺伝における普遍分散を算出します。
 		lfSigma = 1.0/(double)sqrt( (double)iParentNumber );
-		
+//		lfSigma = 0.05;
+//		lfSigma = 0.5;
+
 		for( i = 0;i < iChildrenNumber; i++ )
 		{
 			// 正規乱数により乱数を発生させます。
@@ -391,9 +417,15 @@ void CRex::vRex()
 			tTempRankData.lfFitProb = pflfConstraintFunction( pplfChildren[i], iGenVector );
 			tTempRankData.iLoc = i;
 			stlFitProb.push_back( tTempRankData );
+//			printf( "%lf,",tTempRankData.lfFitProb );
 		}
+//		printf("\n");
 		// 目的関数値によるソートを実施します。
 		std::sort( stlFitProb.begin(), stlFitProb.end(), CCompareToRank() );
+		for( i = 0;i < iChildrenNumber; i++ )
+		{
+//			printf("%lf ",stlFitProb.at(i).lfFitProb );
+		}
 		// 親を入れ替えます。(JGGモデルの場合は親はすべて変更するものとします。)
 		for( i = 0; i < iParentNumber; i++ )
 		{
@@ -451,16 +483,20 @@ void CRex::vRexStar()
 			if( iMaxSize == iParentNumber ) break;
 		}
 		// 重心を算出します。
-		for( j = 0;j < iGenVector; j++ )
+		for( i = 0;i < iGenVector; i++ )
 		{
-			plfCentroid[j] = 0.0;
+			plfCentroid[i] = 0.0;
 		}
-		for( j = 0;j < iParentNumber; j++ )
+		for( i = 0;i < iParentNumber; i++ )
 		{
-			for( k = 0;k < iGenVector; k++ )
+			for( j = 0;j < iGenVector; j++ )
 			{
-				plfCentroid[k] += ( pplfGens[stlSelectParentLoc.at(j)][k]/(double)iParentNumber );
+				plfCentroid[j] += ( pplfGens[stlSelectParentLoc.at(i)][j] );
 			}
+		}
+		for( i = 0;i < iParentNumber; i++ )
+		{
+			plfCentroid[j] /= (double)iParentNumber;
 		}
 	// REX(RealCoded Emsanble )を実行します。交叉回数Nc回実行し、Nc個の子供を生成します。
 		// 統計量遺伝における普遍分散を算出します。
@@ -542,6 +578,7 @@ void CRex::vARex()
 	double lAvgDist = 0.0;
 	double lfTemp = 0.0;
 	std::vector<Rank_t> stlFitProb;
+	std::vector<Rank_t> stlParentFitProb;
 	Rank_t tTempRankData;
 	std::vector<int> stlSelectParentLoc;
 	
@@ -568,10 +605,16 @@ void CRex::vARex()
 			{
 				stlSelectParentLoc.push_back( iLoc );
 				iMaxSize++;
+				
+				// 親データを適応度でソートするため、データを代入します。
+				tTempRankData.lfFitProb = pflfConstraintFunction( pplfGens[iLoc], iGenVector );
+				tTempRankData.iLoc = iLoc;
+				stlParentFitProb.push_back( tTempRankData );
 			}
 			// 指定した親の数になったら終了します。
 			if( iMaxSize == iParentNumber ) break;
 		}
+		std::sort( stlParentFitProb.begin(), stlParentFitProb.end(), CCompareToRank() );
 	
 		// 重心を算出します。
 		for( j = 0;j < iGenVector; j++ )
@@ -588,6 +631,19 @@ void CRex::vARex()
 	// REX(RealCoded Emsanble )を実行します。交叉回数Nc回実行し、Nc個の子供を生成します。
 		// 統計量遺伝における普遍分散を算出します。
 		lfSigma = 1.0/(double)sqrt( (double)iParentNumber );
+
+		// 交叉中心降下を算出します。
+		for( i = 0;i < iGenVector; i++ )
+		{
+			plfCentroidSteep[i] = 0.0;
+		}
+		for( i = 0;i < iParentNumber; i++ )
+		{
+			for( j = 0;j < iGenVector; j++ )
+			{
+				plfCentroidSteep[j] += 2.0*(double)(iParentNumber+1-i)/(double)(iParentNumber*(iParentNumber+1))*pplfGens[stlParentFitProb.at(i).iLoc][j];
+			}
+		}
 		
 		for( i = 0;i < iChildrenNumber; i++ )
 		{
@@ -609,9 +665,9 @@ void CRex::vARex()
 					plfTempVector[k] += plfNormalizeRand[j] * ( pplfGens[stlSelectParentLoc.at(j)][k] - plfCentroid[k] );
 				}
 			}
-			for( k = 0;k < iGenVector; k++ )
+			for( j = 0;j < iGenVector; j++ )
 			{
-				plfChildVector[k] = plfCentroid[k] + lfAlpha*plfTempVector[k];
+				plfChildVector[j] = plfCentroidSteep[j] + lfAlpha*plfTempVector[j];
 			}
 			for( j = 0;j < iGenVector; j++ )
 			{

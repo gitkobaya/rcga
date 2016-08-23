@@ -70,6 +70,7 @@ private:
 	double *plfNormalizeRand;
 	double *plfChildrenCentroid;
 	double *plfUpperEvalChildrenCentroid;
+	double *plfCentroidSteep;
 	double lfLcdp;
 	double lfLavg;
 	double lfLearningRate;

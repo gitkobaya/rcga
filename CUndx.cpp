@@ -468,6 +468,50 @@ void CUndx::vOutputCurrentChildren( double** pplfChildrenData )
 	}
 }
 
+/**
+ * <PRE>
+ * 　遺伝子に値を設定します。
+ *   ver 0.1 初版 
+ * </PRE>
+ * @param pplfGenData 
+ * @author kobayashi
+ * @since 2016/08/10
+ * @version 0.1
+ */
+void CUndx::vSetGenData( double** pplfGenData )
+{
+	int i,j;
+	for( i= 0; i < iGenNumber; i++ )
+	{
+		for( j = 0;j < iGenVector; j++ )
+		{
+			pplfGens[i][j] = pplfGenData[i][j];
+		}
+	}
+}
+
+/**
+ * <PRE>
+ * 　現在の遺伝子データを取得します。
+ *   ver 0.1 初版 
+ * </PRE>
+ * @param pplfGenData 
+ * @author kobayashi
+ * @since 2016/08/10
+ * @version 0.1
+ */
+void CUndx::vGetGenData( double** pplfGenData )
+{
+	int i,j;
+	for( i= 0; i < iGenNumber; i++ )
+	{
+		for( j = 0;j < iGenVector; j++ )
+		{
+			pplfGenData[i][j] = pplfGens[i][j];
+		}
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////CCmdCheckExceptionクラス
