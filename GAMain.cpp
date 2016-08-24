@@ -229,6 +229,10 @@ void vSetObjectiveFunction( CCmdCheck *pcCmd, void *pvGaClass )
 	{
 		pcRealCodedGa->vSetConstraintFunction( lfSphere );
 	}
+	else if( strcmp(pcCmd->pcGetFuncName(), "ellipsoid" ) == 0 )
+	{
+		pcRealCodedGa->vSetConstraintFunction( lfEllipsoid );
+	}
 	else if( strcmp(pcCmd->pcGetFuncName(), "hyper-ellipsoid" ) == 0 )
 	{
 		pcRealCodedGa->vSetConstraintFunction( lfHyperEllipsoid );
@@ -253,9 +257,17 @@ void vSetObjectiveFunction( CCmdCheck *pcCmd, void *pvGaClass )
 	{
 		pcRealCodedGa->vSetConstraintFunction( lfRosenbrock );
 	}
+	else if( strcmp(pcCmd->pcGetFuncName(), "rosenbrockstar" ) == 0 )
+	{
+		pcRealCodedGa->vSetConstraintFunction( lfRosenbrockStar );
+	}
 	else if( strcmp(pcCmd->pcGetFuncName(), "rastrigin" ) == 0 )
 	{
 		pcRealCodedGa->vSetConstraintFunction( lfRastrigin );
+	}
+	else if( strcmp(pcCmd->pcGetFuncName(), "rastriginshift" ) == 0 )
+	{
+		pcRealCodedGa->vSetConstraintFunction( lfRastriginShift );
 	}
 	else if( strcmp(pcCmd->pcGetFuncName(), "griewank" ) == 0 )
 	{
@@ -304,6 +316,10 @@ void vSetObjectiveFunction( CCmdCheck *pcCmd, void *pvGaClass )
 	else if( strcmp(pcCmd->pcGetFuncName(), "Shubert" ) == 0 )
 	{
 		pcRealCodedGa->vSetConstraintFunction( lfShubert );
+	}
+	else if( strcmp(pcCmd->pcGetFuncName(), "ktablet" ) == 0 )
+	{
+		pcRealCodedGa->vSetConstraintFunction( lfkTablet );
 	}
 	else
 	{

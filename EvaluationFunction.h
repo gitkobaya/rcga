@@ -21,6 +21,20 @@ extern double lfSphere( double *plfX, int iVectorLen );
 
 /**
  * <PRE>
+ * 　目的関数のEllipsoid関数の計算を実行します。
+ * 　-5.12 <= x_i <= 5.12 f_i(x_i)=0,  x_i=0, i = 1,2,･･･,n
+ * 　f(x) = sum(1000^{i-1/n-1}x_{i})^{2}
+ * </PRE>
+ * @param plfX			引数
+ * @param iVectorLen	引数の次元数
+ * @author kobayashi
+ * @since 2016/8/24
+ * @version 0.1
+ */
+extern double lfEllipsoid( double *plfX, int iVectorLen );
+
+/**
+ * <PRE>
  * 　目的関数のHyper-Ellipsoid関数の計算を実行します。
  * 　-1 <= x_i <= 1 f_i(x_i)=0,  x_i=0, i = 1,2,･･･,n
  * 　f(x) = sum(i^{2}*x_{i}^{2})
@@ -100,6 +114,18 @@ extern double lfSumOfDifferentPower( double *plfX, int iVectorLen );
  * @version 1.0
  */
 extern double lfRosenbrock( double *plfX, int iVectorLen );
+
+/**
+ * <PRE>
+ * 　目的関数のRosenbrockStar型関数の計算を実行します。
+ * </PRE>
+ * @param plfX			引数
+ * @param iVectorLen	引数の次元数
+ * @author kobayashi
+ * @since 2016/8/24
+ * @version 0.1
+ */
+extern double lfRosenbrockStar( double *plfX, int iVectorLen );
 
 /**
  * <PRE>
@@ -258,6 +284,19 @@ extern double lfRastrigin( double *plfX, int iVectorLen );
 
 /**
  * <PRE>
+ * 　目的関数のRastriginShift関数の計算を実行します。
+ * 　大域的最適解 Xi = 1 f(Xi) = 0 (-5.12 <= Xi <= 5.12)
+ * </PRE>
+ * @param plfX			引数
+ * @param iVectorLen	引数の次元数
+ * @author kobayashi
+ * @since 2016/8/24
+ * @version 0.1
+ */
+extern double lfRastriginShift( double *plfX, int iVectorLen );
+
+/**
+ * <PRE>
  * 　目的関数のSchwefel's 関数の計算を実行します。
  * 　大域的最適解 x_{i}=420.09687 f(x_{i})=-418.9829n (-512<=x_{i}<=512)
  *   \sum^{n}_{i=1}(x_{i}\sin\sqr(|x_{i}|))
@@ -338,5 +377,20 @@ extern double lfBraninsRCos( double *plfX, int iVectorLen );
  * @version 1.0
  */
 extern double lfShubert( double *plfX, int iVectorLen );
+
+/**
+ * <PRE>
+ * 　目的関数のk-tablet関数の計算を実行します。
+ *	 -\sum^{k}_{i=1}x_{i}^2+\sum^{n}_{i=k+1}(100x_{i})^{2}
+ * 　大域的最適解 -5.12 \leq X_{1}, X_{2} \leq 5.12 x = (0,0,0,0...,0)
+ *   k=n/4
+ * </PRE>
+ * @param plfX			引数
+ * @param iVectorLen	引数の次元数
+ * @author kobayashi
+ * @since 2016/8/24
+ * @version 0.1
+ */
+extern double lfkTablet( double *plfX, int iGenVector );
 
 #endif /* _EVALUATION_FUNCTION_H_ */

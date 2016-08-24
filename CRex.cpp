@@ -387,6 +387,7 @@ void CRex::vRex()
 			for( j = 0;j < iParentNumber; j++ )
 			{
 				plfNormalizeRand[j] = grand(lfSigma, 0.0);
+//				plfNormalizeRand[j] = sqrt(3.0/(double)iParentNumber)*rnd();
 			}
 			for( j = 0;j < iGenVector; j++ )
 			{
@@ -625,7 +626,7 @@ void CRex::vARex()
 		{
 			for( k = 0;k < iGenVector; k++ )
 			{
-				plfCentroid[k] += ( pplfGens[stlSelectParentLoc.at(j)][k]/(double)iParentNumber );
+				plfCentroid[k] += ( pplfGens[stlParentFitProb.at(j).iLoc][k]/(double)iParentNumber );
 			}
 		}
 	// REX(RealCoded Emsanble )を実行します。交叉回数Nc回実行し、Nc個の子供を生成します。
@@ -641,7 +642,7 @@ void CRex::vARex()
 		{
 			for( j = 0;j < iGenVector; j++ )
 			{
-				plfCentroidSteep[j] += 2.0*(double)(iParentNumber+1-i)/(double)(iParentNumber*(iParentNumber+1))*pplfGens[stlParentFitProb.at(i).iLoc][j];
+				plfCentroidSteep[j] += 2.0*(double)(iParentNumber+1-i+1)/(double)(iParentNumber*(iParentNumber+1))*pplfGens[stlParentFitProb.at(i).iLoc][j];
 			}
 		}
 		
@@ -662,12 +663,12 @@ void CRex::vARex()
 			// REXを実行して、子供を生成します。
 				for( k = 0;k < iGenVector; k++ )
 				{
-					plfTempVector[k] += plfNormalizeRand[j] * ( pplfGens[stlSelectParentLoc.at(j)][k] - plfCentroid[k] );
+					plfTempVector[k] += plfNormalizeRand[j] * ( pplfGens[stlParentFitProb.at(j).iLoc][k] - plfCentroid[k] );
 				}
 			}
 			for( j = 0;j < iGenVector; j++ )
 			{
-				plfChildVector[j] = plfCentroidSteep[j] + lfAlpha*plfTempVector[j];
+				plfChildVector[j] = plfCentroid[j] + lfAlpha*plfTempVector[j];
 			}
 			for( j = 0;j < iGenVector; j++ )
 			{
@@ -725,11 +726,11 @@ void CRex::vARex()
 		{
 			for( j = 0;j < iGenVector; j++ )
 			{
-				lfTemp = pplfGens[stlSelectParentLoc.at(i)][j] - plfCentroid[j];
+				lfTemp = pplfGens[stlParentFitProb.at(i).iLoc][j] - plfCentroid[j];
 			}
 			lfLavg += lfTemp*lfTemp;
 		}
-		lfLavg = lfLavg+lfAlpha*lfAlpha*lfSigma*lfSigma;
+		lfLavg = lfLavg*lfAlpha*lfAlpha*lfSigma*lfSigma/(double)iUpperEvalChildrenNumber;
 
 		// αの更新を行います。
 		lfTemp = lfAlpha * sqrt( (1.0-lfLearningRate)+lfLearningRate*lfLcdp/lfLavg );
@@ -740,7 +741,7 @@ void CRex::vARex()
 		{
 			for( j = 0;j < iGenVector; j++ )
 			{
-				pplfGens[stlSelectParentLoc.at(i)][j] = pplfChildren[stlFitProb[i].iLoc][j];
+				pplfGens[stlParentFitProb.at(i).iLoc][j] = pplfChildren[stlFitProb[i].iLoc][j];
 			}
 		}
 	}
