@@ -56,11 +56,33 @@ public:
 	void vOutputCurrentChildren( double **pplfChildrenData );
 
 private:
+	/**
+	 * <PRE>
+	 * 　拡張率適応度をユークリッド距離により計算します。
+	 * </PRE>
+	 * @author kobayashi
+	 * @since 2016/8/25
+	 * @version 0.1
+	 */
+	void vAerEuclide( const std::vector<Rank_t>& stlParentFitProb );
+
+	/**
+	 * <PRE>
+	 * 　拡張率適応度をマハラノビス距離により計算します。
+	 * </PRE>
+	 * @author kobayashi
+	 * @since 2016/8/25
+	 * @version 0.1
+	 */
+	void vAerMahalanobis( const std::vector<Rank_t>& stlFitProb );
+
+private:
 	int iParentOutputFlag;
 	int iChildrenOutputFlag;
 	int iParentNumber;
 	int iChildrenNumber;
 	int iUpperEvalChildrenNumber;
+	int iDistanceFlag;
 	double **pplfChildren;
 	double *plfTempVector;
 	double *plfCentroid;
@@ -68,6 +90,7 @@ private:
 	double *plfChildCentroid;
 	double *plfUpperEvalCentroid;
 	double *plfNormalizeRand;
+	double **pplfNormalizeRand;
 	double *plfChildrenCentroid;
 	double *plfUpperEvalChildrenCentroid;
 	double *plfCentroidSteep;
@@ -103,6 +126,5 @@ private:
 	std::string strModuleName;
 	std::string strErrDetail;
 };
-
 
 #endif /* _CREX_H_ */

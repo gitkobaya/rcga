@@ -20,6 +20,7 @@ CRex::CRex()
 	iParentNumber = 0;
 	iChildrenNumber = 0;
 	pplfChildren = NULL;
+	iDistanceFlag = 2;
 }
 
 CRex::~CRex()
@@ -59,7 +60,6 @@ void CRex::vInitialize( int iGenerationNum, int iGenNum, int iGenVectorData, int
 				throw( cre );
 			}
 		}
-		
 		plfTempVector = new double[iGenVector];
 		if( plfTempVector == NULL )
 		{
@@ -175,7 +175,21 @@ void CRex::vInitialize( int iGenerationNum, int iGenNum, int iGenVectorData, int
 				throw( cre );
 			}
 		}
-		
+		pplfNormalizeRand = new double*[iChildrenNumber];
+		if( pplfNormalizeRand == NULL )
+		{
+			cre.SetErrorInfo( REX_MEMORY_ALLOCATE_ERROR, "vInitialize", "CRex", "メモリ確保に失敗しました。", __LINE__ );
+			throw( cre );
+		}
+		for( i = 0;i < iChildrenNumber; i++ )
+		{
+			pplfNormalizeRand[i] = new double[iParentNumber];
+			if( pplfNormalizeRand[i] == NULL )
+			{
+				cre.SetErrorInfo( REX_MEMORY_ALLOCATE_ERROR, "vInitialize", "CRex", "メモリ確保に失敗しました。", __LINE__ );
+				throw( cre );
+			}
+		}		
 		plfTempVector = new double[iGenVector];
 		if( plfTempVector == NULL )
 		{
@@ -238,6 +252,11 @@ void CRex::vInitialize( int iGenerationNum, int iGenNum, int iGenVectorData, int
 			plfNormalizeRand[i] = 0.0;
 		}
 
+		for( i = 0;i < iChildrenNumber; i++ )
+		{
+			memset( pplfNormalizeRand[i], 0, iParentNumber*sizeof(double) );
+		}
+
 		initrand( (unsigned long)time(NULL) );
 		initrnd();
 	}
@@ -275,6 +294,19 @@ void CRex::vTerminate()
 			}
 			delete[] pplfChildren;
 			pplfChildren = NULL;
+		}
+		if( pplfNormalizeRand != NULL )
+		{
+			for( i = 0;i < iChildrenNumber; i++ )
+			{
+				if( pplfNormalizeRand[i] != NULL )
+				{
+					delete[] pplfNormalizeRand[i];
+					pplfNormalizeRand[i] = NULL;
+				}
+			}
+			delete[] pplfNormalizeRand;
+			pplfNormalizeRand = NULL;
 		}
 		if( plfTempVector != NULL )
 		{
@@ -631,7 +663,7 @@ void CRex::vARex()
 		}
 	// REX(RealCoded Emsanble )を実行します。交叉回数Nc回実行し、Nc個の子供を生成します。
 		// 統計量遺伝における普遍分散を算出します。
-		lfSigma = 1.0/(double)sqrt( (double)iParentNumber );
+		lfSigma = 1.0/(double)sqrt( (double)iParentNumber-1 );
 
 		// 交叉中心降下を算出します。
 		for( i = 0;i < iGenVector; i++ )
@@ -642,16 +674,18 @@ void CRex::vARex()
 		{
 			for( j = 0;j < iGenVector; j++ )
 			{
-				plfCentroidSteep[j] += 2.0*(double)(iParentNumber+1-i+1)/(double)(iParentNumber*(iParentNumber+1))*pplfGens[stlParentFitProb.at(i).iLoc][j];
+				plfCentroidSteep[j] += 2.0*(double)(iParentNumber+1-(i+1))/(double)(iParentNumber*(iParentNumber+1))*pplfGens[stlParentFitProb.at(i).iLoc][j];
 			}
 		}
-		
+
 		for( i = 0;i < iChildrenNumber; i++ )
 		{
 			// 正規乱数により乱数を発生させます。
 			for( j = 0;j < iParentNumber; j++ )
 			{
 				plfNormalizeRand[j] = grand(lfSigma, 0.0);
+				if( iDistanceFlag == 2 )
+					pplfNormalizeRand[i][j] = plfNormalizeRand[j];
 			}
 			for( j = 0;j < iGenVector; j++ )
 			{
@@ -704,44 +738,29 @@ void CRex::vARex()
 		{
 			for( j = 0;j < iGenVector; j++ )
 			{
-				plfUpperEvalChildrenCentroid[i] += pplfChildren[stlFitProb[i].iLoc][j];
+				plfUpperEvalChildrenCentroid[j] += pplfChildren[stlFitProb[i].iLoc][j];
 			}
 		}
-		for( i = 0;i < iUpperEvalChildrenNumber; i++ )
+		for( i = 0;i < iGenVector; i++ )
 		{
 			plfUpperEvalChildrenCentroid[i] /= (double)iUpperEvalChildrenNumber;
 		}
 
-		// Ldcpを算出します。
-		lfLcdp = 0.0;
-		for( i = 0;i < iGenVector; i++ )
+		// 拡張率適応度を計算します。
+		if( iDistanceFlag == 1 )
 		{
-			lfTemp = plfUpperEvalChildrenCentroid[i] - plfChildrenCentroid[i];
-			lfLcdp += lfTemp*lfTemp;
+			vAerEuclide( stlParentFitProb );
 		}
-
-		// Lavgを算出します。
-		lfLavg = 0.0;
-		for( i = 0;i < iParentNumber; i++ )
+		else if( iDistanceFlag == 2 )
 		{
-			for( j = 0;j < iGenVector; j++ )
-			{
-				lfTemp = pplfGens[stlParentFitProb.at(i).iLoc][j] - plfCentroid[j];
-			}
-			lfLavg += lfTemp*lfTemp;
+			vAerMahalanobis( stlFitProb );
 		}
-		lfLavg = lfLavg*lfAlpha*lfAlpha*lfSigma*lfSigma/(double)iUpperEvalChildrenNumber;
-
-		// αの更新を行います。
-		lfTemp = lfAlpha * sqrt( (1.0-lfLearningRate)+lfLearningRate*lfLcdp/lfLavg );
-		lfAlpha = lfTemp > 1 ? 1.0 : lfTemp;
-
 		// 親を入れ替えます。(JGGモデルの場合は親はすべて変更するものとします。)
 		for( i = 0; i < iParentNumber; i++ )
 		{
 			for( j = 0;j < iGenVector; j++ )
 			{
-				pplfGens[stlParentFitProb.at(i).iLoc][j] = pplfChildren[stlFitProb[i].iLoc][j];
+				pplfGens[stlParentFitProb.at(i).iLoc][j] = pplfChildren[stlFitProb.at(i).iLoc][j];
 			}
 		}
 	}
@@ -751,6 +770,88 @@ void CRex::vARex()
 		throw( cre );
 	}
 	stlSelectParentLoc.clear();
+}
+
+/**
+ * <PRE>
+ * 　拡張率適応度をユークリッド距離により計算します。
+ * </PRE>
+ * @author kobayashi
+ * @since 2016/8/25
+ * @version 0.1
+ */
+void CRex::vAerEuclide( const std::vector<Rank_t>& stlParentFitProb )
+{
+	int i,j;
+	double lfTemp;
+	double lfSigma;
+
+	// Ldcpを算出します。
+	lfSigma = 1.0/(double)sqrt( (double)iParentNumber-1 );
+	lfLcdp = 0.0;
+	for( i = 0;i < iGenVector; i++ )
+	{
+		lfTemp = plfUpperEvalChildrenCentroid[i] - plfChildrenCentroid[i];
+		lfLcdp += lfTemp*lfTemp;
+	}
+
+	// Lavgを算出します。
+	lfLavg = 0.0;
+	for( i = 0;i < iParentNumber; i++ )
+	{
+		for( j = 0;j < iGenVector; j++ )
+		{
+			lfTemp = pplfGens[stlParentFitProb.at(i).iLoc][j] - plfCentroid[j];
+		}
+		lfLavg += lfTemp*lfTemp;
+	}
+	lfLavg = lfLavg*lfAlpha*lfAlpha*lfSigma*lfSigma/(double)iUpperEvalChildrenNumber;
+
+	// αの更新を行います。
+	lfTemp = lfAlpha * sqrt( (1.0-lfLearningRate)+lfLearningRate*lfLcdp/lfLavg );
+	lfAlpha = lfTemp < 1.0 ? 1.0 : lfTemp;
+}
+
+/**
+ * <PRE>
+ * 　拡張率適応度をユークリッド距離により計算します。
+ * </PRE>
+ * @author kobayashi
+ * @since 2016/8/25
+ * @version 0.1
+ */
+void CRex::vAerMahalanobis( const std::vector<Rank_t>& stlFitProb )
+{
+	int i,j;
+	double lfTemp;
+	double lfSigma;
+	double lfRandAvg = 0.0;
+	double lfRandAvgSumSquare = 0.0;
+	double lfRandAvgSumSquareAvg = 0.0;
+
+	// Ldcpを算出します。
+	lfSigma = 1.0/(double)sqrt( (double)iParentNumber-1 );
+	lfLcdp = 0.0;
+	for( i = 0;i < iParentNumber; i++ )
+	{
+		lfRandAvg = 0.0;
+		for( j = 0;j < iUpperEvalChildrenNumber; j++ )
+		{
+			lfRandAvg += pplfNormalizeRand[i][stlFitProb.at(j).iLoc];
+		}
+		lfRandAvg /= (double)iUpperEvalChildrenNumber;
+		lfRandAvgSumSquare += lfRandAvg*lfRandAvg;
+		lfRandAvgSumSquareAvg += lfRandAvg;
+	}
+	lfRandAvgSumSquareAvg *= lfRandAvgSumSquareAvg/(double)iParentNumber;
+	lfLcdp = lfAlpha*lfAlpha*(iParentNumber-1)*(lfRandAvgSumSquare-lfRandAvgSumSquareAvg);
+
+	// Lavgを算出します。
+	lfLavg = lfLavg*lfAlpha*lfAlpha*lfSigma*lfSigma*(iParentNumber-1)*(iParentNumber-1)/(double)iUpperEvalChildrenNumber;
+
+	// αの更新を行います。
+	lfTemp = lfAlpha * sqrt( (1.0-lfLearningRate)+lfLearningRate*lfLcdp/lfLavg );
+	lfAlpha = lfTemp < 1.0 ? 1.0 : lfTemp;
 }
 
 /**
