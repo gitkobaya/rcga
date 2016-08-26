@@ -612,7 +612,7 @@ double lfSchwefel( double *plfX, int iVectorLen )
 	{
 		lfRes += ( plfX[i]*sin(sqrt(fabs(plfX[i]))) );
 	}
-	return -lfRes;
+	return 418.9829*iVectorLen-lfRes;
 }
 
 /**
@@ -652,7 +652,7 @@ double lfShubert( double *plfX, int iVectorLen )
 	int n;
 	double lfResX = 0.0;
 	double lfResY = 0.0;
-	n = (int)plfX[2];
+	n = 5;
 
 	for( i = 0;i < n; i++ )
 	{

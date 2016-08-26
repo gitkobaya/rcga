@@ -702,7 +702,7 @@ void CRex::vARex()
 			}
 			for( j = 0;j < iGenVector; j++ )
 			{
-				plfChildVector[j] = plfCentroid[j] + lfAlpha*plfTempVector[j];
+				plfChildVector[j] = plfCentroidSteep[j] + lfAlpha*plfTempVector[j];
 			}
 			for( j = 0;j < iGenVector; j++ )
 			{
@@ -725,7 +725,7 @@ void CRex::vARex()
 		{
 			for( j = 0;j < iGenVector; j++ )
 			{
-				plfChildrenCentroid[j] += pplfChildren[i][j];
+				plfChildrenCentroid[j] += pplfChildren[stlFitProb.at(i).iLoc][j];
 			}
 		}
 		for( j = 0;j < iGenVector; j++ )
@@ -738,12 +738,12 @@ void CRex::vARex()
 		{
 			for( j = 0;j < iGenVector; j++ )
 			{
-				plfUpperEvalChildrenCentroid[j] += pplfChildren[stlFitProb[i].iLoc][j];
+				plfUpperEvalChildrenCentroid[j] += pplfChildren[stlFitProb.at(i).iLoc][j];
 			}
 		}
-		for( i = 0;i < iGenVector; i++ )
+		for( j = 0;j < iGenVector; j++ )
 		{
-			plfUpperEvalChildrenCentroid[i] /= (double)iUpperEvalChildrenNumber;
+			plfUpperEvalChildrenCentroid[j] /= (double)iUpperEvalChildrenNumber;
 		}
 
 		// Šg’£—¦“K‰ž“x‚ðŒvŽZ‚µ‚Ü‚·B
