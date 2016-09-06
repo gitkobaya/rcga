@@ -360,7 +360,7 @@ double lfAckley( double *plfX, int iVectorLen )
 	double lfRes = 0.0;
 	double lfCos = 0.0;
 	double lfX2 = 0.0;
-	double lfE = exp(1);
+	double lfE = exp(1.0);
 
 	for( i = 0;i < iVectorLen; i++ )
 	{

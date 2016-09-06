@@ -55,6 +55,30 @@ public:
 	 */
 	void vOutputCurrentChildren( double **pplfChildrenData );
 
+	/**
+	 * <PRE>
+	 * 　遺伝子に値を設定します。
+	 *   ver 0.1 初版 
+	 * </PRE>
+	 * @param pplfGenData 
+	 * @author kobayashi
+	 * @since 2016/08/26
+	 * @version 0.1
+	 */
+	void vSetGenData( double** pplfGenData );
+
+	/**
+	 * <PRE>
+	 * 　現在の遺伝子データを取得します。
+	 *   ver 0.1 初版 
+	 * </PRE>
+	 * @param pplfGenData 
+	 * @author kobayashi
+	 * @since 2016/08/26
+	 * @version 0.1
+	 */
+	void vGetGenData( double** pplfGenData );
+
 private:
 	/**
 	 * <PRE>

@@ -1,80 +1,32 @@
-$ ./pso -gn 100 -pn 1 -pv 10 -w 1 -c1 1 -c2 1 -vl 8 -pm 1 -f 1 -out 1
 
 コンパイルの順番
 １　オブジェクトファイルの作成（複数指定可能）
 　　-cオプションでオブジェクトファイルの作成。これで*.oファイルが作成される。
 
-　　g++ -c PSOMain.cpp PSO.cpp cmd_check.cpp
+    g++ -c GaMain.cpp cmd_check.cpp mseq.cpp EvaluationFunction.cpp cdfrand.cpp CRealCodedGa.cpp CUndx.cpp CRex.cpp -O3
 　　g++ -c mseq.cpp
 
 ２　実行ファイルの作成
 　　-oオプションで実行ファイルを作成。通常は*.outが作成されるがcygwinなので、*.exe
-　　g++ PSOMain.o PSO.o cmd_check.o mseq.o -o PSO
+    g++ GaMain.o cmd_check.o mseq.o EvaluationFunction.o cdfrand.o CRealCodedGa.o CUndx.o CRex.o -o rcga
+
+
+３　最適化オプション
+    -O2　ほとんど最適化
+　　-O3  最大限の最適化
 
 ３　実行
-　　./pso コマンドオプション
+　　./rcga コマンドオプション
 
 実験用コマンド一覧
-PSOの実験
-w = 1.0 c1 = 2.0 c2 = 2.0 次元数=30 繰り返し回数=30000 粒子数=10
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -vl 100 -pm 1 -f sphere -out 5 > result_pso_sphere.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -vl 2.048 -pm 1 -f rosenbrock -out 5 > result_pso_rosenbrock.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -vl 5.12 -pm 1 -f rastrigin -out 5 > result_pso_rastrigin.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -vl 600 -pm 1 -f griewank -out 5 > result_pso_griewank.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -vl 65.535 -pm 1 -f 5thDeJongs -out 5 > result_pso_5thDeJongs.txt
+UNDXの実験
+α = 1.0 β = 2.0 次元数=50 繰り返し回数=100000 集団数=2000 交叉回数(子供を生成する数)=300で実行
+./rcga -gn 100000 -n 2000 -gv 50 -con 300 -gm 1 -alpha 1 -beta 0.35 -f rastriginshift -pn 51 -cn 500 -lr 0.004 -uecn 100 -dmin -2.12 -dmax 2.12 -out 4
 
-IWAの実験
-w = 1.0 c1 = 2.0 c2 = 2.0 wmax = 0.9 wmin = 0.4 次元数=30 繰り返し回数=30000 粒子数=100
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -wmax 0.9 -wmin 0.4 -vl 100 -pm 2 -f sphere -out 5 > result_iwa_sphere.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -wmax 0.9 -wmin 0.4 -vl 2.048 -pm 2 -f rosenbrock -out 5 > result_iwa_rosenbrock.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -wmax 0.9 -wmin 0.4 -vl 5.12 -pm 2 -f rastrigin -out 5 > result_iwa_rastrigin.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -wmax 0.9 -wmin 0.4 -vl 600 -pm 2 -f griewank -out 5 > result_iwa_griewank.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -wmax 0.9 -wmin 0.4 -vl 65.535 -pm 2 -f 5thDeJongs -out 5 > result_iwa_5thDeJongs.txt
+REXの実験
+親の数pn=51(n+k kは1～1.5gvを推奨。) 生成する子供の数cn=500(問題による) 次元数gv=50 繰り返し回数gn=100000 集団数n=2000(問題による。少なくとも10gvは必要)
+./rcga -gn 100000 -n 2000 -gv 50 -con 300 -gm 2 -alpha 1 -beta 0.35 -f rastriginshift -pn 51 -cn 500 -lr 0.004 -uecn 100 -dmin -2.12 -dmax 2.12 -out 4
 
-CFAの実験
-w = 1.0 c1 = 2.05 c2 = 2.05 次元数=30 繰り返し回数=30000 粒子数=100
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2.05 -c2 2.05 -vl 100 -pm 3 -f sphere -out 5 > result_cfa_sphere.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2.05 -c2 2.05 -vl 2.048 -pm 3 -f rosenbrock -out 5 > result_cfa_rosenbrock.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2.05 -c2 2.05 -vl 5.12 -pm 3 -f rastrigin -out 5 > result_cfa_rastrigin.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2.05 -c2 2.05 -vl 600 -pm 3 -f rosenbrock -out 5 > result_cfa_griewank.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2.05 -c2 2.05 -vl 65.535 -pm 3 -f rastrigin -out 5 > result_cfa_5thDeJongs.txt
-
-IWCFAの実験
-w = 1.0 c1 = 2.05 c2 = 2.05 wmax = 1.1 wmin = 0.4 次元数=30 繰り返し回数=30000 粒子数=100
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2.05 -c2 2.05 -wmax 1.1 -wmin 0.4 -vl 100 -pm 4 -f sphere -out 5 > result_iwcfa_sphere.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2.05 -c2 2.05 -wmax 1.1 -wmin 0.4 -vl 2.048 -pm 4 -f rosenbrock -out 5 > result_iwcfa_rosenbrock.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2.05 -c2 2.05 -wmax 1.1 -wmin 0.4 -vl 5.12 -pm 4 -f rastrigin -out 5 > result_iwcfa_rastrigin.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2.05 -c2 2.05 -wmax 1.1 -wmin 0.4 -vl 600 -pm 4 -f griewank -out 5 > result_iwcfa_griwank.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2.05 -c2 2.05 -wmax 1.1 -wmin 0.4 -vl 65.535 -pm 4 -f 5thDeJongs -out 5 > result_iwcfa_5thDeJongs.txt
-
-PSOrankの実験
-w = 1.0 c1 = 2.0 c2 = 2.0 wbest = 0.75 wworst = 0.25 次元数=30 繰り返し回数=30000 粒子数=100
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -wb 0.75 -ww 0.25 -vl 100 -pm 5 -f sphere -out 5 > result_pso_rank_sphere.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -wb 0.75 -ww 0.25 -vl 2.048 -pm 5 -f rosenbrock -out 5 > result_pso_rank_rosenbrock.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -wb 0.75 -ww 0.25 -vl 5.12 -pm 5 -f rastrigin -out 5 > result_pso_rank_rastrigin.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -wb 0.75 -ww 0.25 -vl 600 -pm 5 -f griewank -out 5 > result_pso_rank_griewank.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -wb 0.75 -ww 0.25 -vl 65.535 -pm 5 -f 5thDeJong -out 5 > result_psorank_5thDeJongs.txt
-
-IWArankの実験
-w = 1.0 c1 = 2.0 c2 = 2.0 -wmax = 0.9 -wmin = 0.4 次元数=30 繰り返し回数=30000 粒子数=100
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -wmax = 0.9 -wmin = 0.4 -vl 1 -pm 2 -f sphere -out 5
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -wmax = 0.9 -wmin = 0.4 -vl 1 -pm 2 -f rosenbrock -out 5
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -wmax = 0.9 -wmin = 0.4 -vl 1 -pm 2 -f rastrigin -out 5
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -wmax = 0.9 -wmin = 0.4 -vl 1 -pm 2 -f rosenbrock -out 5
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -wmax = 0.9 -wmin = 0.4 -vl 1 -pm 2 -f rastrigin -out 5
-
-CFArankの実験
-w = 1.0 c1 = 2.05 c2 = 2.05 wbest = 1.25 wworst = 0.25 次元数=30 繰り返し回数=30000 粒子数=100
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -wb 1.25 -ww 0.25 -vl 100 -pm 2 -f sphere -out 5
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -wb 1.25 -ww 0.25 -vl 2.048 -pm 2 -f rosenbrock -out 5
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -wb 1.25 -ww 0.25 -vl 5.12 -pm 2 -f rastrigin -out 5
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -wb 1.25 -ww 0.25 -vl 600 -pm 2 -f griewank -out 5
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2 -c2 2 -wb 1.25 -ww 0.25 -vl 65.535 -pm 2 -f 5thDeJongs -out 5
-
-IWCFAの実験
-w = 1.0 c1 = 2.05 c2 = 2.05 wmax = 1.5 wmin = 0.4 wbest = 1 wworst = 0.25 次元数=30 繰り返し回数=30000 粒子数=100
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2.05 -c2 2.05 -wmax 1.5 -wmin 0.4 -wb 1.0 -ww 0.25 -vl 100 -pm 4 -f sphere -out 5 > result_iwcfa_sphere.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2.05 -c2 2.05 -wmax 1.5 -wmin 0.4 -wb 1.0 -ww 0.25 -vl 2.048 -pm 4 -f rosenbrock -out 5 > result_iwcfa_rosenbrock.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2.05 -c2 2.05 -wmax 1.5 -wmin 0.4 -wb 1.0 -ww 0.25 -vl 5.12 -pm 4 -f rastrigin -out 5 > result_iwcfa_rastrigin.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2.05 -c2 2.05 -wmax 1.5 -wmin 0.4 -wb 1.0 -ww 0.25 -vl 600 -pm 4 -f griewank -out 5 > result_iwcfa_griwank.txt
-./pso -gn 30000 -pn 100 -pv 30 -w 1 -c1 2.05 -c2 2.05 -wmax 1.5 -wmin 0.4 -wb 1.0 -ww 0.25 -vl 65.535 -pm 4 -f 5thDeJongs -out 5 > result_iwcfa_5thDeJongs.txt
+AREXの実験
+親の数pn=51(n+k kは1～1.5gvを推奨。) 生成する子供の数cn=500(問題による) 選択する子供の数=100 学習率lr=0.004 次元数gv=50 繰り返し回数gn=100000 集団数n=2000(問題による。少なくとも10gvは必要)
+./rcga -gn 100000 -n 2000 -gv 50 -con 300 -gm 3 -alpha 1 -beta 0.35 -f rastriginshift -pn 51 -cn 500 -lr 0.004 -uecn 100 -dmin -2.12 -dmax 2.12 -out 4
