@@ -171,39 +171,39 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\cdfrand.cpp"
+				RelativePath=".\cdfrand.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\cmd_check.cpp"
+				RelativePath=".\cmd_check.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\CRealCodedGa.cpp"
+				RelativePath=".\CRealCodedGa.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\CRex.cpp"
+				RelativePath=".\CRex.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\csv.cpp"
+				RelativePath=".\csv.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\CUndx.cpp"
+				RelativePath=".\CUndx.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\EvaluationFunction.cpp"
+				RelativePath=".\EvaluationFunction.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\GAMain.cpp"
+				RelativePath=".\GAMain.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\MSEQ.CPP"
+				RelativePath=".\MSEQ.CPP"
 				>
 			</File>
 		</Filter>
@@ -213,35 +213,39 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\CDFRAND.H"
+				RelativePath=".\CDFRAND.H"
 				>
 			</File>
 			<File
-				RelativePath="..\cmd_check.h"
+				RelativePath=".\cmd_check.h"
 				>
 			</File>
 			<File
-				RelativePath="..\constdata.h"
+				RelativePath=".\constdata.h"
 				>
 			</File>
 			<File
-				RelativePath="..\CRealCodedGa.h"
+				RelativePath=".\CRealCodedGa.h"
 				>
 			</File>
 			<File
-				RelativePath="..\CRex.h"
+				RelativePath=".\CRex.h"
 				>
 			</File>
 			<File
-				RelativePath="..\csv.h"
+				RelativePath=".\csv.h"
 				>
 			</File>
 			<File
-				RelativePath="..\CUndx.h"
+				RelativePath=".\CUndx.h"
 				>
 			</File>
 			<File
-				RelativePath="..\MSEQ.H"
+				RelativePath=".\EvaluationFunction.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MSEQ.H"
 				>
 			</File>
 		</Filter>
