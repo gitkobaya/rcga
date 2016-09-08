@@ -151,7 +151,7 @@ void CRex::vInitialize( int iGenerationNum, int iGenNum, int iGenVectorData, int
 	}
 }
 
-void CRex::vInitialize( int iGenerationNum, int iGenNum, int iGenVectorData, int iParentNumberData, int iChildrenNumberData, double lfLearningRateData,int iUpperEvalChildrenNum )
+void CRex::vInitialize( int iGenerationNum, int iGenNum, int iGenVectorData, int iParentNumberData, int iChildrenNumberData, double lfLearningRateData,int iUpperEvalChildrenNumData )
 {
 	int i;
 	CRexException cre;
@@ -169,7 +169,7 @@ void CRex::vInitialize( int iGenerationNum, int iGenNum, int iGenVectorData, int
 	lfLearningRate = lfLearningRateData;
 
 	// 交叉後の評価値上位の子供の数の閾値を設定します。
-	iUpperEvalChildrenNumber = iUpperEvalChildrenNum > iChildrenNumber ? iChildrenNumber : iUpperEvalChildrenNumber;
+	iUpperEvalChildrenNumber = iUpperEvalChildrenNumData > iChildrenNumber ? iChildrenNumber : iUpperEvalChildrenNumData;
 
 	lfAlpha = 1.0;
 	
@@ -618,34 +618,6 @@ void CRex::vARex()
 			}
 		}
 	
-		// 親をランダムにNp個選択します。
-/*		for(;;)
-		{
-			iLoc = mrand() % iGenNumber;
-			// 選択した親と重なっていないか調査します。
-			iOverLapLoc = -1;
-			for( i = 0;i < (unsigned int)stlSelectParentLoc.size(); i++ )
-			{
-				if( stlSelectParentLoc.at(i) == iLoc )
-				{
-					iOverLapLoc = i;
-					break;
-				}
-			}
-			// 重なっていなければ、位置を追加します。
-			if( iOverLapLoc == -1 )
-			{
-				stlSelectParentLoc.push_back( iLoc );
-				iMaxSize++;
-				
-				// 親データを適応度でソートするため、データを代入します。
-				tTempRankData.lfFitProb = pflfConstraintFunction( pplfGens[iLoc], iGenVector );
-				tTempRankData.iLoc = iLoc;
-				stlParentFitProb.push_back( tTempRankData );
-			}
-			// 指定した親の数になったら終了します。
-			if( iMaxSize == iParentNumber ) break;
-		}*/
 		std::sort( stlParentFitProb.begin(), stlParentFitProb.end(), CCompareToRank() );
 	
 		// 重心及び交叉中心降下を算出します。
@@ -660,20 +632,19 @@ void CRex::vARex()
 			}
 			plfCentroid[j] /= (double)iParentNumber;
 			plfCentroidSteep[j] /= (double)(iParentNumber*(iParentNumber+1));
-				printf("%d:ココ通ったよ～\n",i);
 		}
 	// REX(RealCoded Emsanble )を実行します。交叉回数Nc回実行し、Nc個の子供を生成します。
 		// 統計量遺伝における普遍分散を算出します。
-		lfSigma = 1.0/(double)sqrt( (double)iParentNumber );
-//		lfSigma = sqrt(3.0/(double)iParentNumber-1);
+//		lfSigma = 1.0/(double)sqrt( (double)iParentNumber );
+		lfSigma = sqrt(3.0/(double)(iParentNumber));
 
 		for( i = 0;i < iChildrenNumber; i++ )
 		{
 			// 正規乱数により乱数を発生させます。
 			for( j = 0;j < iParentNumber; j++ )
 			{
-				plfNormalizeRand[j] = grand(lfSigma, 0.0);
-//				plfNormalizeRand[j] = lfSigma*(2.0*rnd()-1.0);
+//				plfNormalizeRand[j] = grand(lfSigma, 0.0);
+				plfNormalizeRand[j] = lfSigma*(2.0*rnd()-1.0);
 				if( iDistanceFlag == 2 ) pplfNormalizeRand[i][j] = plfNormalizeRand[j];
 			}
 			for( k = 0;k < iGenVector; k++ )
@@ -789,7 +760,8 @@ void CRex::vAerMahalanobis( const std::vector<Rank_t>& stlFitProb )
 	double lfRandAvgSumSquareAvg = 0.0;
 
 	// Ldcpを算出します。
-	lfSigma = 1.0/(double)sqrt( (double)iParentNumber );
+//	lfSigma = 1.0/(double)sqrt( (double)iParentNumber );
+	lfSigma = sqrt( 3.0/(double)iParentNumber );
 	lfLcdp = 0.0;
 	for( i = 0;i < iParentNumber; i++ )
 	{
@@ -802,7 +774,7 @@ void CRex::vAerMahalanobis( const std::vector<Rank_t>& stlFitProb )
 		lfRandAvgSumSquare += lfRandAvg*lfRandAvg;
 		lfRandAvgSumSquareAvg += lfRandAvg;
 	}
-	lfRandAvgSumSquareAvg *= lfRandAvgSumSquareAvg/(double)iParentNumber;
+	lfRandAvgSumSquareAvg = lfRandAvgSumSquareAvg*lfRandAvgSumSquareAvg/(double)iParentNumber;
 	lfLcdp = lfAlpha*lfAlpha*(iParentNumber-1)*(lfRandAvgSumSquare-lfRandAvgSumSquareAvg);
 
 	// Lavgを算出します。
